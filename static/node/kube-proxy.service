@@ -1,0 +1,13 @@
+[Unit]
+Description=Kubernetes Proxy
+[Service]
+ExecStartPre=/usr/bin/mkdir -p /opt/bin
+ExecStartPre=/usr/bin/chmod +x /opt/bin/hyperkube
+ExecStart=/opt/bin/hyperkube proxy \
+--master=http://10.5.5.10:8080 \
+--proxy-mode=iptables \
+--v=2
+Restart=on-failure
+RestartSec=5
+[Install]
+WantedBy=multi-user.target

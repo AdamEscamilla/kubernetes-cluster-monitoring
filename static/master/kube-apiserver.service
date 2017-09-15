@@ -1,0 +1,26 @@
+[Unit]
+Description=Kubernetes API Server
+Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+[Service]
+ExecStartPre=/usr/bin/mkdir -p /opt/bin
+ExecStartPre=/usr/bin/chmod +x /opt/bin/hyperkube
+ExecStart=/opt/bin/hyperkube apiserver \
+--insecure-bind-address=0.0.0.0 \
+--etcd-servers=http://127.0.0.1:2379 \
+--allow-privileged=true \
+--service-cluster-ip-range=10.2.0.0/16 \
+--secure-port=443 \
+--advertise-address=10.5.5.10 \
+--admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,ResourceQuota \
+--tls-cert-file=/etc/kubernetes/ssl/apiserver.pem \
+--tls-private-key-file=/etc/kubernetes/ssl/apiserver-key.pem \
+--client-ca-file=/etc/kubernetes/ssl/ca.pem \
+--service-account-key-file=/etc/kubernetes/ssl/apiserver-key.pem \
+--runtime-config=extensions/v1beta1/networkpolicies=true \
+--basic-auth-file=/etc/kubernetes/basic_auth.csv \
+--anonymous-auth=false
+Restart=on-failure
+RestartSec=5
+[Install]
+WantedBy=multi-user.target
+

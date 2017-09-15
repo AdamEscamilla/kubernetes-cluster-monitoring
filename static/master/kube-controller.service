@@ -1,0 +1,14 @@
+[Unit]
+Description=Kubernetes Controller Manager
+[Service]
+ExecStartPre=/usr/bin/mkdir -p /opt/bin
+ExecStartPre=/usr/bin/chmod +x /opt/bin/hyperkube
+ExecStart=/opt/bin/hyperkube controller-manager  \
+--master=http://127.0.0.1:8080 \
+--service-account-private-key-file=/etc/kubernetes/ssl/apiserver-key.pem \
+--root-ca-file=/etc/kubernetes/ssl/ca.pem \
+--v=2
+Restart=on-failure
+RestartSec=5
+[Install]
+WantedBy=multi-user.target

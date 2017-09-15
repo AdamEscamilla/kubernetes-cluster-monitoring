@@ -1,0 +1,17 @@
+[Unit]
+Description=etcd
+[Service]
+ExecStartPre=/usr/bin/chmod +x /opt/bin/etcd
+ExecStart=/opt/bin/etcd \
+--initial-advertise-peer-urls http://10.5.5.10:2380 \
+--listen-peer-urls http://10.5.5.10:2380 \
+--listen-client-urls http://10.5.5.10:2379,http://127.0.0.1:2379 \
+--advertise-client-urls http://10.5.5.10:2379 \
+--initial-cluster-token etcd-cluster \
+--initial-cluster etcd0=http://10.5.5.10:2380,etcd1=http://10.5.5.11:2380 \
+--initial-cluster-state new \
+--name etcd0
+Restart=on-failure
+RestartSec=5
+[Install]
+WantedBy=multi-user.target
