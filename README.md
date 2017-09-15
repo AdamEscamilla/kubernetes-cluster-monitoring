@@ -2,7 +2,7 @@
 
  A bare minimum configuration, suitable for development.
  This builds latest upstream kubernetes and all native components with acception of kubelet, we're using the
- coreos recommended [kubelet-wrapper](#) as CoreOS doesn't ship with socat. This is only required if deploying charts with helm.
+ coreos recommended [kubelet-wrapper](https://coreos.com/kubernetes/docs/latest/kubelet-wrapper.html) as CoreOS doesn't ship with socat. This is only required if deploying charts with helm.
 
 ### Requirements
  These need to be installed in your local path
@@ -39,6 +39,21 @@ private_key_path = "/home/adam/.ssh/id_rsa"
 
 ```
 
+Run ssh-agent so we can use it to tunnel through our bastion host
+```bash
+eval $(ssh-agent -s)
+ssh-add /home/adam/.ssh/id_rsa
+ssh-add -l
+```
+
+### Run multiple instances of kubectl
+
+go to the project root and run
+```bash
+make test && make run
+```
+This will esstablish a new session with your cluster
+
 ### Deploy the cluster
 
 ```bash
@@ -48,9 +63,19 @@ make all
 ```
 Done!
 
+This will establish a kubectl session with the cluster, test at the console, try it and result should appear similar
+```bash
+kubectl cluster-info
+> Kubernetes master is running at http://34.228.233.84:8080
+> Heapster is running at http://34.228.233.84:8080/api/v1/namespaces/kube-system/services/heapster/proxy
+> KubeDNS is running at http://34.228.233.84:8080/api/v1/namespaces/kube-system/services/kube-dns/proxy
+> Grafana is running at http://34.228.233.84:8080/api/v1/namespaces/kube-system/services/monitoring-grafana/proxy
+> InfluxDB is running at http://34.228.233.84:8080/api/v1/namespaces/kube-system/services/monitoring-influxdb/proxy
+```
+
 ### Deploy TICK monitoring app
 
-there is a chart available for this (shamelessly borrows)
+There is a chart available for this (shamelessly borrows)
 ```bash
 git clone https://github.com/jackzampolin/tick-charts.git
 cd tick-charts
@@ -61,7 +86,7 @@ helm install --name data --namespace tick ./influxdb/
 ```
 ### Test it
 
-create a utility pod to test our services
+Create a utility pod to test our services
 ```bash
 cat > busybox.yaml <<-'EOF'
 apiVersion: v1
@@ -93,7 +118,7 @@ kubectl exec -it busybox -- telnet data-influxdb.tick 8086
 >
 
 ```
-if that worked, then install the other services
+If that worked, then install the other services
 ```bash
 helm install --name polling --namespace tick ./telegraf-s/
 helm install --name hosts --namespace tick ./telegraf-ds/
@@ -106,7 +131,7 @@ helm install --name dash --namespace tick ./chronograf/
 # stop proxy with ^C
 kubectl port-forward -n tick $(kubectl get pods -n tick -l app=dash-chronograf -o jsonpath='{ .items[0].metadata.name }') 8888
 ```
-visit in your browser http://localhost:8888/
+Visit in your browser http://localhost:8888/
 
 admin / password
 
@@ -118,4 +143,4 @@ make clean
 ```
 
 ## To Do
-~~No external dependencies~~ (using external kubelet wrapper, see [issue](#)) and [coreos #NoSocat](#)
+~~No external dependencies~~ (using external kubelet wrapper, see [issue](https://github.com/coreos/bugs/issues/1114)) and [coreos #NoSocat](https://github.com/kubernetes/kops/issues/1861)
