@@ -19,6 +19,13 @@ export AWS_DEFAULT_REGION="us-west-2"
 ```
 
 ### Specify ssh keys
+Run ssh-agent so we can use it to tunnel through our bastion host
+```bash
+eval $(ssh-agent -s)
+ssh-add /home/adam/.ssh/id_rsa
+ssh-add -l
+```
+
  You will need to provide a public key and the path to your private key using either of the methods below
 
 Method #1 Provide details during the deployment
@@ -37,13 +44,6 @@ cat terraform.vars
 public_key = "ssh-rsa AAAAB3NzaC1yc...itHyqMcw== adam@localhost"
 private_key_path = "/home/adam/.ssh/id_rsa"
 
-```
-
-Run ssh-agent so we can use it to tunnel through our bastion host
-```bash
-eval $(ssh-agent -s)
-ssh-add /home/adam/.ssh/id_rsa
-ssh-add -l
 ```
 
 ### Deploy the cluster
