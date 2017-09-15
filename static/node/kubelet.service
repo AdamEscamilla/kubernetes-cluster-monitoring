@@ -1,0 +1,14 @@
+[Unit]
+Description=Kubernetes Kubelet
+[Service]
+Environment=KUBELET_IMAGE_TAG=v1.6.1_coreos.0
+ExecStart=/etc/systemd/system/kubelet-wrapper \
+  --api-servers=http://10.5.5.10:8080 \
+  --cluster-dns=10.2.0.10 \
+  --cluster-domain=cluster.local \
+  --v=2
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
