@@ -46,14 +46,6 @@ ssh-add /home/adam/.ssh/id_rsa
 ssh-add -l
 ```
 
-### Run multiple instances of kubectl
-
-go to the project root and run
-```bash
-make test && make run
-```
-This will esstablish a new session with your cluster
-
 ### Deploy the cluster
 
 ```bash
@@ -72,6 +64,14 @@ kubectl cluster-info
 > Grafana is running at http://34.228.233.84:8080/api/v1/namespaces/kube-system/services/monitoring-grafana/proxy
 > InfluxDB is running at http://34.228.233.84:8080/api/v1/namespaces/kube-system/services/monitoring-influxdb/proxy
 ```
+
+### Run multiple instances of kubectl
+
+go to the project root and run
+```bash
+make test && make run
+```
+This will esstablish a new session with your cluster
 
 ### Deploy TICK monitoring app
 
